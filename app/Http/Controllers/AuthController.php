@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Hash;
+use Http;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
@@ -16,12 +17,23 @@ class AuthController extends Controller
             'username' => 'required|string|max:255',
             'phonenumber' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users,email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
+            'captcha_token' => 'required|string',
             'role' => 'in:user,merchant,admin'
         ]);
 
         if($validator->fails()){
             return response()->json($validator->errors(), 422);
+        }
+
+        $captchaResponse = $request->input('captcha_token');
+        $verify = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => env('RECAPTCHA_SECRET_KEY'),
+            'response' => $captchaResponse,
+        ]);
+
+        if (!optional($verify->json())['success']) {
+            return response()->json(['error' => 'CAPTCHA verification failed'], 422);
         }
 
         $user = User::create([
