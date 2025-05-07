@@ -1,4 +1,4 @@
-**register
+**register**
 ```bash
 {
     "username": "username",
@@ -10,7 +10,7 @@
     "role": "role"               // user, admin. merchant
 }
 ```
-**login
+**login**
 ```bash
 {
     "login": "username||email",
