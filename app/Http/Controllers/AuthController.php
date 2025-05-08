@@ -18,7 +18,7 @@ class AuthController extends Controller
             'phonenumber' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'captcha_token' => 'required|string',
+            // 'captcha_token' => 'required|string',
             'role' => 'in:user,merchant,admin'
         ]);
 
@@ -26,15 +26,15 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $captchaResponse = $request->input('captcha_token');
-        $verify = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => env('RECAPTCHA_SECRET_KEY'),
-            'response' => $captchaResponse,
-        ]);
+        // $captchaResponse = $request->input('captcha_token');
+        // $verify = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        //     'secret' => env('RECAPTCHA_SECRET_KEY'),
+        //     'response' => $captchaResponse,
+        // ]);
 
-        if (!optional($verify->json())['success']) {
-            return response()->json(['error' => 'CAPTCHA verification failed'], 422);
-        }
+        // if (!optional($verify->json())['success']) {
+        //     return response()->json(['error' => 'CAPTCHA verification failed'], 422);
+        // }
 
         $user = User::create([
             'username' => $request->username,
