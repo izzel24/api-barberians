@@ -26,13 +26,22 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
+Route::get('/users', [UserController::class, 'fetch']);
+Route::get('/customer/merchants', [merchantsController::class, 'fetchForCustomer']);
+Route::get('/customer/merchants/{id}', [merchantsController::class, 'showForCustomer']);
+
 Route::middleware(['auth:api', 'role:admin,merchant'])->group(function () {
 Route::get('/merchants', [merchantsController::class, 'fetch']);
-Route::get('/users', [UserController::class, 'fetch']);
-Route::put('/user/{id}', [UserController::class, 'update']);  
-Route::delete('/user/{id}', [UserController::class, 'destroy']);
+
+Route::put('/users/{id}', [UserController::class, 'update']);  
+Route::delete('/users/{id}', [UserController::class, 'destroy']);
 Route::put('/merchants/{id}/status', [merchantsController::class, 'updateStatus']);
 });
 
-Route::middleware(['auth:api', 'role:merchant'])->post('/merchants', [merchantsController::class, 'create']);
+Route::middleware(['auth:api', 'role:merchant'])->group(function () {
+    Route::post('/merchants', [merchantsController::class, 'create']);
+     Route::get('/merchant/profile', [merchantsController::class, 'showForMerchants']);
+
+     Route::put('/merchants', [merchantsController::class, 'update']);
+});
 
