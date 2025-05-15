@@ -13,6 +13,6 @@ class MerchantOperatingHour extends Model
 
     public function merchant()
     {
-        return $this->belongsTo(merchants::class);
+        return $this->belongsTo(merchants::class, 'merchant_id');
     }
 }
