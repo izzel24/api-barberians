@@ -19,7 +19,7 @@ class QueueController extends Controller
             'service_id' => 'required|exists:services,id',
             'date' => 'required|date',
             'time' => 'required',
-            'payment_method' => 'required|in:cash,transfer,midtrans', // tambahkan validasi
+            'payment_method' => 'required|in:cash,transfer,virtual_account', // tambahkan validasi
         ]);
 
         $service = Service::findOrFail($request->service_id);
@@ -47,8 +47,6 @@ class QueueController extends Controller
         ], 500);
     }
 
-    // broadcast(new QueueUpdated($queue))->toOthers();
-    // broadcast(new QueueUpdated(($queue))->toOthers());
 }
 
     // 2. Get user's queues
@@ -58,7 +56,6 @@ class QueueController extends Controller
         return response()->json($queues);
     }
 
-    // 3. Merchant updates queue status (accept/reject)
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -67,13 +64,10 @@ class QueueController extends Controller
 
         $queue = Queue::findOrFail($id);
 
-        // Optional: validasi apakah merchant yang sedang login adalah pemilik antrean ini
-        // if ($queue->merchant->user_id !== Auth::id()) return response()->json(['error' => 'Unauthorized'], 403);
 
         $queue->status = $request->status;
 
         if ($request->status === 'accepted') {
-            // Hitung queue_number berdasarkan antrean accepted sebelumnya
             $count = Queue::where('merchant_id', $queue->merchant_id)
                 ->where('date', $queue->date)
                 ->where('status', 'accepted')
@@ -86,7 +80,7 @@ class QueueController extends Controller
         return response()->json(['message' => 'Queue status updated', 'data' => $queue]);
     }
 
-    // 4. Optional: Merchant fetch all queues
+
    public function merchantQueues()
 {
     $user = auth()->user();
@@ -111,7 +105,6 @@ class QueueController extends Controller
         $queue = Queue::findOrFail($id);
         $queue->update($request->all());
 
-        // Broadcast event ke frontend
         broadcast(new QueueUpdated($queue))->toOthers();
 
         return response()->json(['message' => 'Queue updated']);
