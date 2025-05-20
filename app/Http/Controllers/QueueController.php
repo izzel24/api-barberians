@@ -19,7 +19,7 @@ class QueueController extends Controller
             'service_id' => 'required|exists:services,id',
             'date' => 'required|date',
             'time' => 'required',
-            'payment_method' => 'required|in:cash,transfer,midtrans', // tambahkan validasi
+            'payment_method' => 'required|in:cash,virtual_account', // tambahkan validasi
         ]);
 
         $service = Service::findOrFail($request->service_id);
