@@ -9,17 +9,9 @@ class Queue extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-    'user_id',
-    'merchant_id',
-    'service_id',
-    'date',
-    'time',
-    'status',
-    'total_price',
-];
+    protected $fillable = ['user_id', 'merchant_id', 'service_id', 'date', 'time', 'status', 'total_price'];
 
-        public function user()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
@@ -32,5 +24,10 @@ class Queue extends Model
     public function service()
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 }
